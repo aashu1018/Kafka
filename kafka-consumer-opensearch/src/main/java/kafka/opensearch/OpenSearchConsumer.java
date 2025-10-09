@@ -109,19 +109,17 @@ public class OpenSearchConsumer {
         final Thread mainThread = Thread.currentThread();
 
         // adding the shutdown hook
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                log.info("Detected a shutdown, let's exit by calling consumer.wakeup()...");
-                consumer.wakeup();
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            log.info("Detected a shutdown, let's exit by calling consumer.wakeup()...");
+            consumer.wakeup();
 
-                // join the main thread to allow the execution of the code in the main thread
-                try {
-                    mainThread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            // join the main thread to allow the execution of the code in the main thread
+            try {
+                mainThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        });
+        }));
 
         // we need to create the index on OpenSearch if it doesn't exist already
 
